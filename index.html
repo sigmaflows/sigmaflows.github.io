@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="LightRAG: Simple and Fast Retrieval-Augmented Generation">
+    <meta name="keywords" content="Retrieval-Augmented Generation, Large Language Model">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>LightRAG</title>
+
+    <script>
+        window.dataLayer = window.dataLayer || [];
+
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+
+        gtag('js', new Date());
+
+        gtag('config', 'G-PYVRSFMDRL');
+    </script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
+    <link rel="icon" href="./static/tjb_images/logo_4.png">
+    <link rel="stylesheet" href="./static/css/bulma.min.css">
+    <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+    <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+    <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+    <link rel="stylesheet" href="./static/css/index.css">
+
+    <link rel="stylesheet" href="./static/css/index-gradio.css">
+    <link rel="stylesheet" href="./static/css/live_theme.css">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script defer src="./static/js/fontawesome.all.min.js"></script>
+    <script src="./static/js/bulma-carousel.min.js"></script>
+    <script src="./static/js/bulma-slider.min.js"></script>
+    <script src="./static/js/index.js"></script>
+</head>
+
+<body>
+
+
+    <section class="hero">
+        <div class="hero-body">
+            <div class="container is-max-desktop">
+                <div class="columns is-centered">
+                    <div class="column has-text-centered">
+                        <h1 class="title is-1 publication-title"
+                            style="display: flex;flex-direction: row;align-items: center;justify-content: center;margin-bottom: 5px;">
+                            LightRAG:</h1>
+                        <h1 class="title is-2 publication-title">Simple and Fast Retrieval-Augmented Generation</h1>
+                        <div class="is-size-5 publication-authors">
+                            <span class="author-block">
+                                <a href="https://scholar.google.com/citations?user=w0i_sZwAAAAJ">Zirui Guo</a>,</span>
+                            <span class="author-block">
+                                <a href="https://akaxlh.github.io/">Lianghao Xia</a>,</span>
+                            <span class="author-block">
+                                <a href="https://scholar.google.com/citations?user=utOY_2UAAAA">Yanhua Yu</a>,</span>
+                            <span class="author-block">
+                                <a href="">Tu Ao</a>,</span>
+                            <span class="author-block">
+                                <a href="https://sites.google.com/view/chaoh">Chao Huang</a><sup>*</sup>,
+                                <!-- </span> -->
+                            </span>
+                        </div>
+
+                        <div class="is-size-5 publication-authors" style="margin-top: 10px;">
+                            <span class="author-block"><a href="https://sites.google.com/view/chaoh/group-join-us">Data
+                                    Intelligence Lab</a>, University of Hong Kong. Beijing University of Posts and
+                                Telecommunications.</span>
+                        </div>
+                        <!-- <div class="is-size-5 publication-authors" style="margin-top: 10px;">
+                        <span class="author-block">Baidu, Inc.</span>
+                    </div> -->
+
+                        <div class="is-size-5 publication-authors">
+                            <span class="author-block" style="font-size: 15px;">(<sup>*</sup>Correspondence)</span>
+                        </div>
+
+                        <div class="column has-text-centered">
+                            <div class="publication-links">
+                                <!-- PDF Link. -->
+                                <span class="link-block">
+                                    <a href="https://arxiv.org/abs/2410.05779"
+                                        class="external-link button is-normal is-rounded is-dark">
+                                        <span class="icon">
+                                            <i class="fas fa-file-pdf"></i>
+                                        </span>
+                                        <span>Paper</span>
+                                    </a>
+                                </span>
+
+                                <!-- Code Link. -->
+                                <span class="link-block">
+                                    <a href="https://github.com/HKUDS/LightRAG"
+                                        class="external-link button is-normal is-rounded is-dark">
+                                        <span class="icon">
+                                            <i class="fab fa-github"></i>
+                                        </span>
+                                        <span>Code</span>
+                                    </a>
+                                </span>
+
+                                <!-- Video Link. -->
+                                <span class="link-block">
+                                    <a href="https://youtu.be/oageL-1I0GE"
+                                        class="external-link button is-normal is-rounded is-dark">
+                                        <span class="icon">
+                                            <i class="fab fa-youtube"></i>
+                                        </span>
+                                        <span>Video</span>
+                                    </a>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+    <section class="section">
+        <div class="container is-max-desktop">
+            <!-- Abstract. -->
+            <div class="columns is-centered has-text-centered">
+                <div class="column is-four-fifths">
+                    <h2 class="title is-2">Abstract</h2>
+                    <div class="content has-text-justified">
+                        <p>
+                            Retrieval-Augmented Generation (RAG) systems enhance large language models (LLMs) by
+                            integrating external knowledge sources, enabling more accurate and contextually
+                            relevant responses tailored to user needs. However, existing RAG systems have
+                            significant limitations, including reliance on flat data representations and
+                            inadequate contextual awareness, which can lead to fragmented answers that fail to
+                            capture complex inter-dependencies. To address these challenges, we propose LightRAG,
+                            which incorporates graph structures into text indexing and retrieval processes. This
+                            innovative framework employs a dual-level retrieval system that enhances comprehensive
+                            information retrieval from both low-level and high-level knowledge discovery. Additionally,
+                            the integration of graph structures with vector representations facilitates efficient
+                            retrieval of related entities and their relationships, significantly improving response
+                            times while maintaining contextual relevance. This capability is further enhanced by an
+                            incremental update algorithm that ensures the timely integration of new data, allowing the
+                            system to remain effective and responsive in rapidly changing data environments. Extensive
+                            experimental validation demonstrates considerable improvements in retrieval accuracy and
+                            efficiency compared to existing approaches.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <!--/ Abstract. -->
+
+            <br>
+        </div>
+    </section>
+
+
+    <section class="section">
+        <div class="container is-max-desktop">
+
+            <div class="columns is-centered has-text-centered">
+                <h2 class="title is-2">Technical Description</h2>
+                <br>
+            </div>
+
+            <!-- Architecture -->
+            <div class="columns is-centered">
+                <div class="column is-full-width">
+                    <h4 class="title is-3">Architecture</h4>
+
+                    <div class="content has-text-justified">
+                        <img class="columns is-centered has-text-centered" src="./static/images/framework.png"
+                            alt="Teaser" width="95%" style="margin:0 auto">
+                        <br>
+                        <br>
+                        <p>
+                        <ul>
+                            <li>
+                                <b>Graph-Enhanced Entity and Relationship Extraction.</b> LightRAG enhances the
+                                retrieval system by segmenting
+                                documents into smaller, more manageable pieces. This strategy allows for quick
+                                identification and access to relevant
+                                information without analyzing entire documents. Next, we leverage LLMs to identify and
+                                extract various entities (e.g.,
+                                names, dates, locations, and events) along with the relationships between them. The
+                                information collected through this
+                                process will be used to create a comprehensive knowledge graph that highlights the
+                                connections and insights across the
+                                entire collection of documents. The functions used in our graph-based text indexing
+                                paradigm are described as:
+                                <ul>
+                                    <li><b>Extracting Entities and Relationships \(\text{R}(\cdot)\)</b>: This function
+                                        prompts a LLM to identify entities (nodes) and
+                                        their relationships (edges) within the text data. For instance, it can extract
+                                        entities like "Cardiologists" and
+                                        "Heart Disease," and relationships such as "Cardiologists diagnose Heart
+                                        Disease" from the text: "Cardiologists
+                                        assess symptoms to identify potential heart issues." To improve efficiency, the
+                                        raw text is segmented into
+                                        multiple chunks.
+                                    </li>
+                                    <li><b>LLM Profiling for Key-Value Pair Generation \(\text{P}(\cdot)\)</b>: We
+                                        employ a LLM-empowered profiling function to generate a
+                                        text key-value pair for each entity node and relation edge. Each index key is a
+                                        word or short phrase that enables
+                                        efficient retrieval, while the corresponding value is a text paragraph
+                                        summarizing relevant snippets from external
+                                        data to aid in text generation. Entities use their names as the sole index key,
+                                        whereas relations may have multiple
+                                        index keys derived from LLM enhancements that include global themes from
+                                        connected entities.
+                                    </li>
+                                    <li><b>Deduplication to Optimize Graph Operations \(\text{D}(\cdot)\)</b>: Finally,
+                                        we implement a deduplication function that identifies
+                                        and merges identical entities and relations from different segments of the raw
+                                        text. This process effectively
+                                        reduces the overhead associated with graph operations by minimizing the graph's
+                                        size, leading to more efficient
+                                        data processing.
+                                    </li>
+                                </ul>
+                                LightRAG offers two advantages through its graph-based text indexing paradigm.
+                                <em>First</em>, comprehensive information
+                                understanding: The constructed graph structures enable the extraction of global
+                                information from multi-hop subgraphs,
+                                greatly enhancing the model's ability to handle complex queries that span multiple
+                                document chunks. <em>Second</em>,
+                                enhanced retrieval performance: The key-value data structures derived from the graph are
+                                optimized for rapid and precise
+                                retrieval. This provides a superior alternative to less accurate embedding matching
+                                methods and inefficient chunk traversal
+                                techniques commonly used in existing approaches.
+                            </li>
+                            <li>
+                                <b>Fast Adaptation to Incremental Knowledge Base.</b> To efficiently adapt to evolving
+                                data changes while ensuring
+                                accurate and relevant responses, LightRAG incrementally updates the knowledge base
+                                without the need for complete
+                                reprocessing of the entire external database. The incremental update algorithm processes
+                                new documents using the same
+                                graph-based indexing steps as before. Subsequently, the model combines the new graph
+                                data with the original by merging
+                                the nodes and edges. Two key objectives guide our approach to fast adaptation for the
+                                incremental knowledge base:
+                                <ul>
+                                    <li><b>Seamless Integration of New Data</b>: By applying a consistent methodology to
+                                        new information, the incremental
+                                        update module allows the model to integrate new external databases without
+                                        disrupting the existing graph structure.
+                                        This approach preserves the integrity of established connections, ensuring that
+                                        historical data remains accessible
+                                        while enriching the graph without conflicts or redundancies.
+                                    </li>
+                                    <li><b>Reducing Computational Overhead</b>: By eliminating the need to rebuild the
+                                        entire index graph, this method
+                                        reduces computational overhead and facilitates the rapid assimilation of new
+                                        data. Consequently, the model
+                                        maintains system accuracy, provides current information, and conserves
+                                        resources, ensuring users receive timely
+                                        updates and enhancing the overall RAG effectiveness.
+                                    </li>
+                                </ul>
+                            </li>
+                            <li>
+                                <b>Dual-level Retrieval Paradigm.</b> To retrieve relevant information from both
+                                specific document chunks and their
+                                complex inter-dependencies, LightRAG proposes generating query keys at both detailed and
+                                abstract levels.
+                                <ul>
+                                    <li><b>Specific Queries</b>: These queries are detail-oriented and typically
+                                        reference specific entities within the
+                                        graph, requiring precise retrieval of information associated with particular
+                                        nodes or edges. For example, a specific
+                                        query might be, "Who wrote 'Pride and Prejudice'?"
+                                    </li>
+                                    <li><b>Abstract Queries</b>: In contrast, abstract queries are more conceptual,
+                                        encompassing broader topics, summaries,
+                                        or overarching themes that are not directly tied to specific entities. An
+                                        example of an abstract query is, "How does
+                                        artificial intelligence influence modern education?"
+                                    </li>
+                                </ul>
+                                To accommodate diverse query types, the model employs two distinct retrieval strategies
+                                within the dual-level retrieval
+                                paradigm. This ensures that both specific and abstract inquiries are addressed
+                                effectively, allowing the system to deliver
+                                relevant responses tailored to user needs.
+                                <ul>
+                                    <li><b>Low-Level Retrieval</b>: This level is primarily focused on retrieving
+                                        specific entities along with their
+                                        associated attributes or relationships. Queries at this level are
+                                        detail-oriented and aim to extract precise
+                                        information about particular nodes or edges within the graph.
+                                    </li>
+                                    <li><b>High-Level Retrieval</b>: This level addresses broader topics and overarching
+                                        themes. Queries at this level
+                                        aggregate information across multiple related entities and relationships,
+                                        providing insights into higher-level
+                                        concepts and summaries rather than specific details.
+                                    </li>
+                                </ul>
+                                By combining graph structures with vector representations, the model gains a deeper
+                                insight into the interrelationships
+                                among entities. This synergy enables the retrieval algorithm to effectively utilize both
+                                local and global keywords,
+                                streamlining the search process and improving the relevance of results.
+                            </li>
+                            <li>
+                                <b>Retrieval-Augmented Answer Generation.</b> Utilizing the retrieved information,
+                                LightRAG employs a general-purpose LLM
+                                to generate answers based on the collected data. This data comprises concatenated values
+                                from relevant entities and
+                                relations, produced by the profiling function. It includes names, descriptions of
+                                entities and relations, and excerpts from
+                                the original text. By unifying the query with this multi-source text, the LLM generates
+                                informative answers tailored to the
+                                user's needs, ensuring alignment with the query's intent. This approach streamlines the
+                                answer generation process by
+                                integrating both context and query into the LLM model.
+                            </li>
+
+                        </ul>
+                        </p>
+                        <br>
+
+                    </div>
+                    <br />
+
+                </div>
+            </div>
+
+
+
+            <!-- Experiments -->
+            <div class="columns is-centered">
+                <div class="column is-full-width">
+                    <h2 class="title is-3">Experiments</h2>
+
+                    <div class="content has-text-justified">
+                        <p>
+                            Defining ground truth for many RAG queries, particularly those involving complex high-level
+                            semantics,
+                            poses significant challenges. To address this, we build on existing work and adopt an
+                            LLM-based multi-dimensional comparison method. We employ a robust LLM, specifically
+                            GPT-4o-mini,
+                            to rank each baseline against LightRAG. In total, we utilize four evaluation dimensions,
+                            including:
+                            i) <strong>Comprehensiveness</strong>: How thoroughly does the answer address all aspects
+                            and details of the question?
+                            ii) <strong>Diversity</strong>: How varied and rich is the answer in offering different
+                            perspectives and insights related to the question?
+                            iii) <strong>Empowerment</strong>: How effectively does the answer enable the reader to
+                            understand the topic and make informed judgments?
+                            iv) <strong>Overall</strong>: This dimension assesses the cumulative performance across the
+                            three preceding criteria to identify the best overall answer.
+                        </p>
+                        <p>
+                            After identifying the winning answer for the three dimensions, the LLM combines the results
+                            to determine the overall better answer.
+                            To ensure a fair evaluation and mitigate the potential bias that could arise from the order
+                            in which the answers are presented
+                            in the prompt, we alternate the placement of each answer. We calculate win rates
+                            accordingly, ultimately leading to the final results.
+                        </p>
+
+                        <h4 class="title is-4">Comparison of LightRAG with Existing RAG Methods</h4>
+                        <p>
+                            We compare LightRAG against each baseline across various evaluation dimensions and datasets.
+                            The results are presented in Table 1.
+                        </p>
+                        <img class="columns is-centered has-text-centered" src="./static/images/baseline_compare.png"
+                            alt="Teaser" width="100%" style="margin:0 auto">
+
+                        <br>
+                        <br>
+                        <h4 class="title is-4">Ablation Study</h4>
+                        <p>
+                            We begin by analyzing the effects of low-level and high-level retrieval paradigms. We
+                            compare two ablated models—each omitting one module—against LightRAG across four
+                            datasets. Here are our key observations for the different variants:
+                        </p>
+
+                        <ul style="margin-left: 20px;">
+                            <li>
+                                <strong>Low-level-only Retrieval</strong>: The -High variant removes high-order
+                                retrieval, leading to a significant performance decline across nearly all datasets and
+                                metrics. This drop is mainly due to its emphasis on the specific information, which
+                                focuses excessively on entities and their immediate neighbors. While this approach
+                                enables deeper exploration of directly related entities, it struggles to gather
+                                information for complex queries that demand comprehensive insights.
+                            </li>
+                            <li>
+                                <strong>High-level-only Retrieval</strong>: The -Low variant prioritizes capturing a
+                                broader range of content by leveraging entity-wise relationships rather than focusing on
+                                specific entities. This approach offers a significant advantage in comprehensiveness,
+                                allowing it to gather more extensive and varied information. However, the trade-off is a
+                                reduced depth in examining specific entities, which can limit its ability to provide
+                                highly detailed insights. Consequently, this high-level-only retrieval method may
+                                struggle with tasks that require precise, detailed answers.
+                            </li>
+                            <li>
+                                <strong>Hybrid Mode</strong>: The hybrid mode, or the full version of LightRAG, combines
+                                the strengths of both low-level and high-level retrieval methods. It retrieves a broader
+                                set of relationships while simultaneously conducting an in-depth exploration of specific
+                                entities. This dual-level approach ensures both breadth in the retrieval process and
+                                depth in the analysis, providing a comprehensive view of the data. As a result,
+                                LightRAG achieves balanced performance across multiple dimensions.
+                            </li>
+                        </ul>
+                        <img class="columns is-centered has-text-centered" src="./static/images/ablation.png"
+                            alt="Teaser" width="100%" style="margin:0 auto">
+
+
+                        <br>
+                        <br>
+                        <h4 class="title is-4">Model Cost and Adaptability Analysis</h4>
+                        <p>
+                            We compare the cost of our LightRAG with that of the top-performing baseline, GraphRAG, from
+                            two key perspectives. First, we examine the number of tokens and API calls during the
+                            indexing and retrieval processes. Second, we analyze these metrics in relation to handling
+                            data changes in dynamic environments. The results of this evaluation on the legal dataset
+                            are presented in Table. In this context, \(T_{\text{extract}}\) represents the token
+                            overhead
+                            for entity and relationship extraction, \(C_{\text{max}}\) denotes the maximum number of
+                            tokens allowed per API call, and \(C_{\text{extract}}\) indicates the number of API calls
+                            required for extraction.
+                        </p>
+
+                        <img class="columns is-centered has-text-centered" src="./static/images/cost.png" alt="Teaser"
+                            width="50%" style="margin:0 auto">
+
+
+
+                    </div>
+                </div>
+
+            </div>
+    </section>
+
+
+    </div>
+    </div>
+
+    </div>
+    </section>
+
+    <section class="section" id="BibTeX">
+        <div class="container is-max-desktop content">
+            <h2 class="title">BibTeX</h2>
+            <pre><code>@article{guo2024lightrag,
+                title={LightRAG: Simple and Fast Retrieval-Augmented Generation}, 
+                author={Zirui Guo and Lianghao Xia and Yanhua Yu and Tu Ao and Chao Huang},
+                year={2024},
+                eprint={2410.05779},
+                archivePrefix={arXiv},
+                primaryClass={cs.IR}
+              }
+            </code></pre>
+        </div>
+    </section>
+
+
+    <footer class="footer">
+        <div class="container">
+            <div class="columns is-centered">
+                <div class="column is-8">
+                    <div class="content">
+                        <p style="text-align: center;">
+                            The webpage is built based on <a
+                                href="https://github.com/nerfies/nerfies.github.io">Nerfies</a>.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+</body>
+
+</html>
